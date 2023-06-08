@@ -2,7 +2,9 @@ import { createServer } from 'http';
 import socketio from 'socket.io';
 import express from 'express';
 import cors from 'cors';
+import { addPlayer, game, removePlayer } from './game.js';
 
+console.log(addPlayer)
 
 // creates an express aplication
 const app = express();
@@ -18,9 +20,9 @@ app.use(cors());
 server.listen(PORT,() => console.log('Server running on port ' + PORT));
 
 // listens for connections to the server
-io.on('connect', (socket) =>{
-    socket.on('join', ({ name, GID},callback)=>{
-        const {error,player,opponent} = addPlayer({
+io.on('connection', (socket) => {
+    socket.on('join', ({ name, GID }, callback) => {
+        const {error, player, opponent} = addPlayer({
             GID,
             PID: socket.id,
             name,

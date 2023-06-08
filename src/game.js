@@ -21,6 +21,14 @@ class Player {
     }
 }
 
+/**
+ * Function for adding a player to a game.
+ * 
+ * @param {object} param0 3-tuple containing the GID, PID, and name of the player to be added
+ * @returns  a status message, 
+ *           the opposing PID,
+ *          and the new player representing the user
+ */
 const addPlayer = ({GID, PID, name}) => {
     // if the Game ID number is not in the list of games, create a new game instance
     if (!games[GID]){
@@ -83,8 +91,9 @@ const removePlayer = (PID) => {
 
 const game = (GID) => games[GID];
 
-export default {
-    addPlayer,
-    game,
-    removePlayer,
-};
+const _addPlayer = addPlayer;
+export { _addPlayer as addPlayer };
+const _game = game;
+export { _game as game };
+const _removePlayer = removePlayer;
+export { _removePlayer as removePlayer };
