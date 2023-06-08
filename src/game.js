@@ -1,19 +1,19 @@
 const games = {};
 
 class Player {
-    constructor(name,color,playerID,gameID){
+    constructor(name,color,PID,GID){
         this.name=name;
         this.color=color;
-        this.playerID = playerID;
-        this.gameID = gameID;
+        this.PID = PID;
+        this.GID = GID;
     }
 }
 
-const addPlayer({gameID, name, playerID}) => {
-    if (!games[gameID]){
+const addPlayer({GID, name, PID}) => {
+    if (!games[GID]){
         const color = Math.random() >  0.5 ? 'w' : 'b';
-        const player = new Player(name, color, playerID, gameID);
-        games[gameID] = [player];
+        const player = new Player(name, color, PID, GID);
+        games[GID] = [player];
         return{
             message: 'Joined game',
             opponent: null,
@@ -21,33 +21,40 @@ const addPlayer({gameID, name, playerID}) => {
         };
     }
     // if there is more than one player already in the game
-    if (games[gameID].length > 1){
+    if (games[GID].length > 1){
         //then the game is full
         return{error: 'This game is full'}
     }
 
 
     // if there room in th game, allow a second player to be added.
-    const opponent = games[gameID][0]
+    const opponent = games[GID][0]
     const color = opponent.color === 'w'? 'b':'w';
-    const player = new Player(name,color,playerID,gameID);
-    games[gameID].push(player);
+    const player = new Player(name,color,PID,GID);
+    games[GID].push(player);
 
     return {
-        message: 'Added successfully',
+        message: 'Added successfully!',
         opponent,
         player,
 
     };
 };
 
-const removePlayer = (playerID) => {
+const removePlayer = (PID) => {
     for (const game in games) {
         let players = games[game];
-        const index = players.findIndex((player1) => player1.playerID === playerID);
+        const index = players.findIndex((player1) => player1.PID === PID);
 
         if (index !== -1){
             return players.splice(index,1)[0];
         }
-    }
-}
+    };
+};
+
+const game = (id) => games[id];
+module.exports = {
+    addPlayer,
+    game,
+    removePlayer,
+};
