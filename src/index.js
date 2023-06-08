@@ -1,14 +1,14 @@
-var http = require('http');
-var socketio = require('socket.io');
-const express = require ('express');
-const cors = require('cors');
+import { createServer } from 'http';
+import socketio from 'socket.io';
+import express from 'express';
+import cors from 'cors';
 
 
 // creates an express aplication
 const app = express();
 
 // initializes a new instance of a server.
-const server = http.createServer(app);
+const server = createServer(app);
 
 // sets default server port as 5001
 const PORT = 5001;
@@ -21,9 +21,9 @@ server.listen(PORT,() => console.log('Server running on port ' + PORT));
 io.on('connect', (socket) =>{
     socket.on('join', ({ name, GID},callback)=>{
         const {error,player,opponent} = addPlayer({
-            name,
-            PID: socket.id,
             GID,
+            PID: socket.id,
+            name,
         });
         if (error) {
             return callback({ error });
