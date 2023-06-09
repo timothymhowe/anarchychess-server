@@ -1,26 +1,33 @@
 import { createServer } from 'http';
-import socketio from 'socket.io';
+import { Server } from 'socket.io';
 import express from 'express';
 import cors from 'cors';
 import { addPlayer, game, removePlayer } from './game.js';
 
-console.log(addPlayer)
-
-// creates an express aplication
+// creates and configures an express.js middleware handler
 const app = express();
+app.use(cors());
+app.use(express.json());
+app.get('/', (req,res) => res.setEncoding({status:"healthy"}));
 
 // initializes a new instance of a server.
 const server = createServer(app);
 
 // sets default server port as 5001
 const PORT = 5001;
-const io = socketio(server);
+const io = new Server(server,{
+    cors:{
+        origin: "http://localhost:3000"
+    }
+});
 
-app.use(cors());
+
+
 server.listen(PORT,() => console.log('Server running on port ' + PORT));
 
 // listens for connections to the server
 io.on('connection', (socket) => {
+
     socket.on('join', ({ name, GID }, callback) => {
         const {error, player, opponent} = addPlayer({
             GID,
@@ -45,7 +52,7 @@ io.on('connection', (socket) => {
             opponent: player,
         });
 
-        if (game(gameID).length >=2){
+        if (game(GID).length >= 2 ){
             const white = game(GID).find((player) => player.color === 'w');
             io.to(GID).emit('message',{
                 message: `Start! ${white.name} to move.`
@@ -54,9 +61,11 @@ io.on('connection', (socket) => {
     });
 
     // when a move is made
-    socket.on('move', ({from,to,GID}) => {
+    socket.on('move', ({GID,from,to}) => {
         socket.broadcast.to(GID).emit('opponentMove',{from,to});
     });
+
+
     // When a player disconnects from the room
     socket.on('disconnect', () => {
         const player = removePlayer(socket.id);
