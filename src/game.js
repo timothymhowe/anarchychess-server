@@ -61,7 +61,10 @@ const addPlayer = ({GID, PID, name}) => {
     const opponent = games[GID][0]
 
     // if the opponent is playing white, then color is black, else white
-    const color = opponent.color === 'w' ? 'b':'w';
+    // const color = opponent.color === 'w' ? 'b':'w';
+    console.log('fix me here!')
+    const color = 'w'
+
     const player = new Player(PID,GID,name,color);
 
     // add the second player to the list of values under the key GID
